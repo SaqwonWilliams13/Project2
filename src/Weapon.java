@@ -22,6 +22,7 @@ public class Weapon
 			damageOfWeapon = 20;
 		}
 	}
+	
 	public double getDamage()
 	{
 		return damageOfWeapon;

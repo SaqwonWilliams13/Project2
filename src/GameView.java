@@ -6,10 +6,16 @@ import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
 
@@ -24,32 +30,58 @@ public class GameView extends JFrame
 	
 	//Character related information
 	private JLabel nameSelect;
-	private JTextField playerInfo;
+	private JTextField nameTextField;
+	private JLabel playerLabel;
+	private JLabel weaponLabel;
+	private JButton brawlerButton;
 	
 	//Weapon related
-	private JLabel weaponSelect;
-	private JTextField weaponName;
+
+	private String weaponName;
 	private JLabel weaponInfo;
 	private JTextField weaponDamage;
 	private JButton weaponButton;
-	private JButton attack1Button;
-	
-	private JFrame frame;
+
+	//Panels
 	private JPanel gamePanel;
 	private JPanel gamePanel2;
-
-
-	private JButton attack2Button;
-	private JLabel playerLabel;
-	private JLabel weaponLabel;
+	private JPanel winPanel;
+	private JPanel lossPanel;
+	private JPanel attackLog;
 	
-	private JButton atk1;
-	private JButton atk2;
+	//Attack Buttons
+	private JButton atk1 = new JButton("Attack 1");
+	private JButton atk2 = new JButton("Attack 2");
+	private JButton reset;
+	
+	//Attack Log
+	private JLabel j1;
+	private JLabel j2;
+		
+	//File related
+	private int winCount;
+	private int lossCount;
+	
+	public void setWinnerBackground()
+	{
+		gamePanel2.setBackground(Color.green);
+	}
+	
+	public void resetGame()
+	{
+		gamePanel2.setBackground(Color.black);
+	}
+	
+	public void win()
+	{
+		winCount++;
+	}
+	
+	public void loss()
+	{
+		lossCount++;
+	}
 
-//	private String name;
-//	private String wName;
-//	private double damage;
-//	
 	public void gamePanelSetNotVisible()
 	{
 		add(gamePanel2);
@@ -63,6 +95,7 @@ public class GameView extends JFrame
 	{
 		gamePanel = new JPanel();
 		gamePanel2 = new JPanel();
+		winPanel = new JPanel();
 		setSize(1000, 750);
 		createPanelOne();
 		add(gamePanel);
@@ -98,56 +131,30 @@ public class GameView extends JFrame
 		c.gridy = 1;
 		gamePanel.add(nameSelect, c);
 		
-		playerInfo = new JTextField("Enter Name");
-		playerInfo.setForeground(Color.blue);
+		nameTextField = new JTextField("Enter Name");
+		nameTextField.setForeground(Color.blue);
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weighty = 0;
 		c.gridx = 2;
 		c.gridy = 2;
-		gamePanel.add(playerInfo, c);
+		gamePanel.add(nameTextField, c);
 
-		//Weapons stuffs
-		weaponSelect = new JLabel("Enter Your Weapon Name");
-		weaponSelect.setFont(new Font("Dialog", Font.PLAIN, 20));
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weighty = 0;
-		c.gridx = 2;
-		c.gridy = 3;
-		gamePanel.add(weaponSelect, c);
-		
-		weaponName = new JTextField("Enter Weapon Name");
-		weaponName.setForeground(Color.red);
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weighty = 0;
-		c.gridx = 2;
-		c.gridy = 4;
-		gamePanel.add(weaponName, c);
-		
-		weaponInfo = new JLabel("Enter Your Weapon Damage < 25");
+		weaponInfo = new JLabel("Choose Your Character");
 		weaponInfo.setFont(new Font("Dialog", Font.PLAIN, 20));
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 0;
 		c.weighty = 0;
-		c.gridx = 3;
+		c.gridx = 2;
 		c.gridy = 3;
 		gamePanel.add(weaponInfo, c);
 		
-		weaponDamage  = new JTextField("Enter Weapon Damage");
-		weaponDamage.setForeground(Color.green);
+		brawlerButton = new JButton("Brawler");
+		brawlerButton.setFont(new Font("Dialog", Font.PLAIN, 20));
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weightx = 0;
 		c.weighty = 0;
-		c.gridx = 3;
+		c.gridx = 2;
 		c.gridy = 4;
-		gamePanel.add(weaponDamage, c);
-		
-		weaponButton = new JButton("Confirm");
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weightx = 0;
-		c.weighty = 0;
-		c.gridx = 4;
-		c.gridy = 4;
-		gamePanel.add(weaponButton, c);
+		gamePanel.add(brawlerButton, c);
 		
 		clickToPlayButtonLabel = new JLabel("Press The Play Button To Continue");
 		clickToPlayButtonLabel.setFont(new Font("Dialog", Font.PLAIN, 20));
@@ -172,10 +179,10 @@ public class GameView extends JFrame
 	{	
 		GridBagConstraints gbc = new GridBagConstraints();
 		gamePanel2.setLayout(new GridBagLayout());
-		gamePanel2.setBackground(Color.gray);
+		gamePanel2.setBackground(Color.black);
 		
-		titleLabel = new JLabel("FIGHT! FIGHT! FIGHT!");
-		titleLabel.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 50));
+		titleLabel = new JLabel("            FIGHT!");
+		titleLabel.setFont(new Font("Dialog", 3, 50));
 		titleLabel.setBorder(BorderFactory.createMatteBorder(5,5,5,5, Color.cyan));
 		titleLabel.setForeground(Color.white);
 		gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -185,7 +192,7 @@ public class GameView extends JFrame
 		gbc.gridy = 0;
 		gamePanel2.add(titleLabel, gbc);
 		
-		JLabel youLabel = new JLabel("YOU:");
+		JLabel youLabel = new JLabel("YOU: ");
 		youLabel.setFont(new Font("Dialog", Font.BOLD, 20));
 		youLabel.setBorder(BorderFactory.createLineBorder(Color.green));
 		youLabel.setForeground(Color.white);
@@ -196,14 +203,6 @@ public class GameView extends JFrame
 		gbc.gridy = 1;
 		gamePanel2.add(youLabel, gbc);
 		
-		JLabel oppLabel = new JLabel("Opponent");
-		oppLabel.setFont(new Font("Dialog", Font.BOLD, 20));
-		oppLabel.setBorder(BorderFactory.createLineBorder(Color.red));
-		oppLabel.setForeground(Color.white);
-		gbc.gridx = 2;
-		gbc.gridy = 1;
-		gamePanel2.add(oppLabel, gbc);
-		
 		playerLabel = new JLabel(getName());
 		playerLabel.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 15));
 		playerLabel.setBorder(BorderFactory.createLineBorder(Color.WHITE));
@@ -213,7 +212,7 @@ public class GameView extends JFrame
 		gbc.gridy = 2;
 		gamePanel2.add(playerLabel, gbc);
 		
-		weaponLabel = new JLabel("Weapon: " + getWeaponName());
+		weaponLabel = new JLabel("Weapon: " + weaponName);
 		weaponLabel.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 15));
 		weaponLabel.setBorder(BorderFactory.createLineBorder(Color.orange));
 		weaponLabel.setForeground(Color.white);
@@ -222,7 +221,15 @@ public class GameView extends JFrame
 		gbc.gridy = 3;
 		gamePanel2.add(weaponLabel, gbc);
 		
-		JLabel oppCharacter = new JLabel("Queen Elizabeth");
+		JLabel oppLabel = new JLabel("Opponent");
+		oppLabel.setFont(new Font("Dialog", Font.BOLD, 20));
+		oppLabel.setBorder(BorderFactory.createLineBorder(Color.red));
+		oppLabel.setForeground(Color.white);
+		gbc.gridx = 2;
+		gbc.gridy = 1;
+		gamePanel2.add(oppLabel, gbc);
+		
+		JLabel oppCharacter = new JLabel("Karen");
 		oppCharacter.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 15));
 		oppCharacter.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 		oppCharacter.setForeground(Color.white);
@@ -230,7 +237,7 @@ public class GameView extends JFrame
 		gbc.gridy = 2;
 		gamePanel2.add(oppCharacter, gbc);
 		
-		JLabel oppWeaponLabel = new JLabel("Weapon: " + "The Royal Crown");
+		JLabel oppWeaponLabel = new JLabel("Weapon: Aura of Entitlement");
 		oppWeaponLabel.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 15));
 		oppWeaponLabel.setBorder(BorderFactory.createLineBorder(Color.orange));
 		oppWeaponLabel.setForeground(Color.white);
@@ -239,99 +246,110 @@ public class GameView extends JFrame
 		gbc.gridy = 3;
 		gamePanel2.add(oppWeaponLabel, gbc);
 		
-		JButton atk1 = new JButton("Attack 1");
+		
+		atk1.setBorder(BorderFactory.createMatteBorder(5,5,5,5,Color.BLUE));
+		atk1.setBackground(Color.cyan);
+		atk1.setOpaque(true);
 		gbc.weighty = 0.01;
 		gbc.gridx = 0;
 		gbc.gridy = 4;
 		gamePanel2.add(atk1, gbc);
 		
-		JButton atk2 = new JButton("Attack 2");
+	
+		atk2.setBorder(BorderFactory.createMatteBorder(5,5,5,5,Color.red));
+		atk2.setBackground(Color.magenta);
+		atk2.setOpaque(true);
 		gbc.weighty = 0.01;
 		gbc.gridx = 0;
 		gbc.gridy = 5;
 		gamePanel2.add(atk2, gbc);
 
+		reset.setBorder(BorderFactory.createMatteBorder(5,5,5,5,Color.black));
+		gbc.weighty = 0.01;
+		gbc.gridx = 2;
+		gbc.gridy = 5;
+		gamePanel2.add(reset, gbc);
 	
-		JPanel attackLog = new JPanel();
+		attackLog = new JPanel();
 		GridBagConstraints gbc2 = new GridBagConstraints();
 		attackLog.setLayout(new GridBagLayout());
-		attackLog.setBackground(Color.white);
-		attackLog.setBorder(BorderFactory.createLineBorder(Color.black));
+		attackLog.setBackground(Color.LIGHT_GRAY);
+		attackLog.setBorder(BorderFactory.createMatteBorder(5,5,5,5,Color.WHITE));
 		gbc.gridy = 2;
 		gbc.gridx = 1;
 		gbc.ipady = 10;
 		gamePanel2.add(attackLog, gbc);
 		
+		j1 = new JLabel("Attack1!");
+		j1.setFont(new Font(Font.MONOSPACED, Font.BOLD | Font.ITALIC, 20));
+		gbc2.ipady = 30;
+		gbc2.gridy = 2;
+		attackLog.add(j1, gbc2);
+	
+			
+		j2 = new JLabel("    ");
+		attackLog.add(j2);
 
 		
-		
-		
-		
-		JLog attackLogInput = new JLog();
-		attackLogInput.setForeground(Color.blue);
-		int[] array = new int[15];
-		for(int i = 1; i < array.length; i++)
-		{
-			attackLogInput = new JLog();
-			//set the text to be the current attack
-			//declare an empty String variable
-			//set the attack buttons to have an event handler
-			//Have the event handler update the String to show
-			//YOU: Did 15 Damage
-			//Queen Elizabeth: Loses 15 Health;
-			attackLogInput.setText(getName());
-			gbc2.gridy = i;
-			attackLog.add(attackLogInput, gbc2);
-		}
-	
-		
-	
 	}
 	
-	class JLog extends JLabel
+	
+	public void setWeaponName(String name)
 	{
-		JLog()
-		{
-			super();
-			setOpaque(true);
-		}
 		
-		protected void paintComponent(Graphics gr)
-		{
-			super.paintComponent(gr);
-		}
+		weaponName = name;
+		
 	}
 	
-	
-	
-	public String printMessage()
+	public void addToAttackLog(String text) 
 	{
-		return "Hello my name is Buddy";
+				
+		j1.setText(text);
+	
 	}
-		
+	
+//	public void addFootSoleImage() 
+//	{
+//				
+//	
+//		try
+//		{
+//			ImageIcon footImage = new ImageIcon("///Users/rodneywiththefatassbutt/git/Project2/src/Images/footSole.png");
+//			Image scaledImage = footImage.getImage().getScaledInstance(500, 500, Image.SCALE_DEFAULT);
+//	
+//			j2.setIcon(footImage);
+//			Thread.sleep(1000);
+//			j2.setVisible(false);
+//		}
+//		catch (InterruptedException e)
+//		{
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
+////		j2.setIcon(new JLabel(new ImageIcon(scaledImage));
+//	
+//	}
+	
+
 	public String getName()
 	{
-		return playerInfo.getText();
-	}
-	
-	public String getWeaponName()
-	{
-		return weaponName.getText();
-	}
-	
-	public double getWeaponDamage()
-	{
-		return Double.parseDouble(weaponDamage.getText());
-	}
-	
-	public void setFightingSequenceLabel()
-	{
-		//
+		return nameTextField.getText();
 	}
 
 	public void addATK1Listener(ActionListener listenATK1)
 	{
 		atk1.addActionListener(listenATK1);
+	}
+	
+	public void addBrawlerButton(ActionListener brawlButton)
+	{
+		brawlerButton.addActionListener(brawlButton);
+	}
+	
+	public void addATK2Listener(ActionListener listenATK2) 
+	{
+		atk2.addActionListener(listenATK2);
 	}
 	
 	public void addTextListener(ActionListener listenTextName)
@@ -358,12 +376,7 @@ public class GameView extends JFrame
 	
 	public JTextField getNameField()
 	{
-		return playerInfo;
-	}
-	
-	public JTextField getWeaponNameField()
-	{
-		return weaponName;
+		return nameTextField;
 	}
 	
 	public JTextField getWeaponDamageField()

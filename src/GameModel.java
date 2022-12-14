@@ -12,12 +12,9 @@ public class GameModel extends Character
 	private Character player1;
 	private Character player2;
 	
-	public void setPlayer1(String name, String wName, double dmg)
+	public void setPlayer1(String name)
 	{
-		
-		player1 = new Character(name, wName, dmg);
-	
-		
+		player1 = new Character(name);	
 	}
 	
 	public void setPlayer1Weapon(String name, double damage)
@@ -35,26 +32,26 @@ public class GameModel extends Character
 		player2.setWeapon(name, damage);
 	}
 	
-	public String getPlayer1()
+	public Character getPlayer1()
+	{
+		return player1;
+	}
+	
+	public Character getPlayer2()
+	{
+		return player2;
+	}
+	
+	public String getPlayer1Name()
 	{
 		return player1.getName();
 	}
 	
-	public String getPlayer2()
+	public String getPlayer2Name()
 	{
 		return player2.getName();
 	}
-	
-	public String getPlayer1Weapon()
-	{
-		return player1.getWeaponName(player1.getWeapon());
-	}
-	
-	public String getPlayer2Weapon()
-	{
-		return player2.getWeaponName(player2.getWeapon());
-	}
-	
+		
 	public void setPlayer1(Character character)
 	{
 		player1 = character;
@@ -65,7 +62,32 @@ public class GameModel extends Character
 		player2 = character;
 	}
 	
+	public double getPlayer1Damage()
+	{
+		return player1.getWeaponDamage(player1.getWeapon());
+	}
+	
+	public double getPlayer2Health()
+	{
+		return player2.getHealth();
+	}
 
+	public double getPlayer1Health()
+	{
+		return player1.getHealth();
+	}
+	
+	public String getPlayer1Weapon()
+	{
+		return player1.getWeapon().getNameOfWeapon();
+	}
+	
+	public void resetGame()
+	{
+		player1.setHealth(100);
+		player2.setHealth(100);
+		
+	}
 
 }
 

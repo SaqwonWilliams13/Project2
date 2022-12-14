@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -13,41 +14,13 @@ public class GameController
 		gameMod = m;
 		gameView = v;
 		
-		gameView.addTextListener(new WeaponListener());
+
 		gameView.addPlayListener(new GameListener());
-	}
-	
-	
-	
-	class WeaponListener implements ActionListener
-	{
-	
-		@Override
-		public void actionPerformed(ActionEvent e)
-		{
-			String weaponName = "";
-			double weaponDamage = 0.0;
-			String name = "";
-			
-			
-			try
-			{
-				gameMod.setPlayer1(gameView.getName(),gameView.getWeaponName(), gameView.getWeaponDamage());
-				gameMod.setPlayer1Weapon(gameView.getWeaponName(), gameView.getWeaponDamage());
-				System.out.println(gameMod.getPlayer1());
-				
-			}
-			
-			catch(NumberFormatException nfe)
-			{
-				gameView.errorMessage("Choose A valid number/name please!");
-			}
-			
-			
-		}
+		gameView.addATK1Listener(new ATK1Listener());
+		gameView.addATK2Listener(new ATK2Listener());
+		gameView.addBrawlerButton(new BrawlListener());
 		
 	}
-
 	
 	class GameListener implements ActionListener
 	{
@@ -61,4 +34,68 @@ public class GameController
 		}
 		
 	}
+	
+	class BrawlListener implements ActionListener
+	{
+
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			
+			Character player = new Character(gameView.getName());
+			gameMod.setPlayer1(player);
+			gameMod.setPlayer2(new Character("Karen"));
+			gameView.setWeaponName(player.getWeaponName());
+			
+			
+		}
+		
+	}
+	
+	class ATK2Listener implements ActionListener
+	{
+
+		@Override
+		public void actionPerformed(ActionEvent e) 
+		{
+			
+			gameView.addToAttackLog("You: used Foot and Furious, Opponent lost " + gameMod.getPlayer1Damage() * 1.1 + " health");
+//			gameView.addFootSoleImage();
+			gameMod.attack2(gameMod.getPlayer2(), gameMod.getPlayer1());
+			System.out.println("Opponent Health: " + gameMod.getPlayer2Health());
+			System.out.println(gameMod.getPlayer1Weapon());
+			
+			if(gameMod.getPlayer2Health() < 0)
+			{
+				gameView.setWinnerBackground();
+				gameView.win();
+				
+			}
+			
+		}
+		
+	}
+	
+	class ATK1Listener implements ActionListener
+	{
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+			
+			gameView.addToAttackLog("You: used Razor Toe Nails, Opponent lost " + gameMod.getPlayer1Damage() + " health");
+			gameMod.attack1(gameMod.getPlayer2(), gameMod.getPlayer1());
+			System.out.println(gameMod.getPlayer1Weapon());
+			System.out.println("Opponent Health: " + gameMod.getPlayer2Health());
+			
+			if(gameMod.getPlayer2Health() < 0)
+			{
+				gameView.setWinnerBackground();
+				gameView.win();
+			
+			}
+
+			
+		}
+	}
+
 }

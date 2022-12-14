@@ -10,24 +10,17 @@ public class Character
 	{
 		name = "McLovin";
 		health = 100;
-		weapon = new Weapon();
+		weapon = new Weapon("ID Card", 15);
 	}
 	
 	public Character(String name)
 	{
 		this.name = name;
 		health = 100;
-		weapon = new Weapon();
+		weapon = new Weapon("Good Ol' Foot Sole", 15);
 	}
 	
-	public Character(String name, String weaponName, double weaponDamage)
-	{
-		this.name = name;
-		health = 100;
-		weapon = new Weapon(weaponName ,weaponDamage);
-	}
-
-	public void attack1(Character attacked, Character attacker)
+	public void attack1(Character attacked, Character attacker) 
 	{
 		//potential error in fighting self
 		if(attacked.getHealth() < 0)
@@ -40,6 +33,19 @@ public class Character
 			attacked.setHealth(attacked.getHealth() - attacker.getWeaponDamage(attacker.getWeapon()));
 		}
 		
+	}
+	
+	public void attack2(Character attacked, Character attacker)
+	{
+		if(attacked.getHealth() < 0)
+		{
+			//put something to end the game
+			System.out.println("YOU WIN");
+		}
+		else
+		{
+			attacked.setHealth(attacked.getHealth() - 1.1 * attacker.getWeaponDamage(attacker.getWeapon()));
+		}
 	}
 	
 	public String getName()
@@ -71,16 +77,15 @@ public class Character
 	{
 		return weapon.getDamage();
 	}
-	
-	public String getWeaponName(Weapon weapon)
-	{
-		return weapon.getNameOfWeapon();
-	}
-	
+		
 	public void setWeapon(String name, double damage)
 	{
 		weapon = new Weapon(name, damage);
 	}
-
+	
+	public String getWeaponName()
+	{
+		return weapon.getNameOfWeapon();
+	}
 
 }
