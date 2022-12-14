@@ -264,6 +264,7 @@ public class GameView extends JFrame
 		gbc.gridy = 5;
 		gamePanel2.add(atk2, gbc);
 
+		reset = new JButton("reset");
 		reset.setBorder(BorderFactory.createMatteBorder(5,5,5,5,Color.black));
 		gbc.weighty = 0.01;
 		gbc.gridx = 2;
