@@ -1,6 +1,8 @@
 import java.awt.BorderLayout;
 
+
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
@@ -33,7 +35,11 @@ public class GameView extends JFrame
 	private JTextField nameTextField;
 	private JLabel playerLabel;
 	private JLabel weaponLabel;
+	private JLabel youLabel;
+	private JLabel oppLabel;
 	private JButton brawlerButton;
+	private JTextField jText;
+	
 	
 	//Weapon related
 
@@ -52,44 +58,19 @@ public class GameView extends JFrame
 	//Attack Buttons
 	private JButton atk1 = new JButton("Attack 1");
 	private JButton atk2 = new JButton("Attack 2");
-	private JButton reset;
+	private JButton reset = new JButton("Reset");
 	
 	//Attack Log
 	private JLabel j1;
 	private JLabel j2;
+	
+	private JLabel winCountLabel;
 		
 	//File related
 	private int winCount;
-	private int lossCount;
-	
-	public void setWinnerBackground()
-	{
-		gamePanel2.setBackground(Color.green);
-	}
-	
-	public void resetGame()
-	{
-		gamePanel2.setBackground(Color.black);
-	}
-	
-	public void win()
-	{
-		winCount++;
-	}
-	
-	public void loss()
-	{
-		lossCount++;
-	}
+	private JButton saveButton = new JButton("Save");
+	private JButton loadSaveButton = new JButton("Load Save");
 
-	public void gamePanelSetNotVisible()
-	{
-		add(gamePanel2);
-		createPanelTwo();
-		gamePanel.setVisible(false);
-		gamePanel2.setVisible(true);
-	}
-	
 
 	public GameView()
 	{
@@ -156,22 +137,45 @@ public class GameView extends JFrame
 		c.gridy = 4;
 		gamePanel.add(brawlerButton, c);
 		
+		JLabel orLabel = new JLabel("Or Enter Previous Save File");
+		orLabel.setFont(new Font("Dialog", Font.PLAIN, 20));
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0;
+		c.weighty = 0;
+		c.gridx = 2;
+		c.gridy = 6;
+		gamePanel.add(orLabel, c);
+		
+		jText = new JTextField("Enter Your Save File Here");
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0;
+		c.weighty = 0;
+		c.gridx = 2;
+		c.gridy = 7;
+		gamePanel.add(jText, c);
+		
 		clickToPlayButtonLabel = new JLabel("Press The Play Button To Continue");
 		clickToPlayButtonLabel.setFont(new Font("Dialog", Font.PLAIN, 20));
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 0;
 		c.weighty = 0;
 		c.gridx = 2;
-		c.gridy = 5;
+		c.gridy = 10;
 		gamePanel.add(clickToPlayButtonLabel, c);
 		
+		loadSaveButton.setFont(new Font("Dialog", Font.PLAIN, 20));
+		c.weightx = 0;
+		c.weighty = 0;
+		c.gridx = 2;
+		c.gridy = 9;
+		gamePanel.add(loadSaveButton, c);
 		
 		playButton = new JButton("PLAY");
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 0;
 		c.weighty = 0;
 		c.gridx = 2;
-		c.gridy = 6;
+		c.gridy = 11;
 		gamePanel.add(playButton, c);
 	}
 	
@@ -192,7 +196,7 @@ public class GameView extends JFrame
 		gbc.gridy = 0;
 		gamePanel2.add(titleLabel, gbc);
 		
-		JLabel youLabel = new JLabel("YOU: ");
+		youLabel = new JLabel("YOU: ");
 		youLabel.setFont(new Font("Dialog", Font.BOLD, 20));
 		youLabel.setBorder(BorderFactory.createLineBorder(Color.green));
 		youLabel.setForeground(Color.white);
@@ -221,7 +225,7 @@ public class GameView extends JFrame
 		gbc.gridy = 3;
 		gamePanel2.add(weaponLabel, gbc);
 		
-		JLabel oppLabel = new JLabel("Opponent");
+		oppLabel = new JLabel("Opponent");
 		oppLabel.setFont(new Font("Dialog", Font.BOLD, 20));
 		oppLabel.setBorder(BorderFactory.createLineBorder(Color.red));
 		oppLabel.setForeground(Color.white);
@@ -264,13 +268,35 @@ public class GameView extends JFrame
 		gbc.gridy = 5;
 		gamePanel2.add(atk2, gbc);
 
-		reset = new JButton("reset");
-		reset.setBorder(BorderFactory.createMatteBorder(5,5,5,5,Color.black));
+		
+		reset.setBorder(BorderFactory.createMatteBorder(5,5,5,5,Color.WHITE));
+		reset.setBackground(Color.WHITE);
+		reset.setOpaque(true);
+		reset.setVisible(false);
+		gbc.weighty = 0.01;
+		gbc.gridx = 2;
+		gbc.gridy = 4;
+		gamePanel2.add(reset, gbc);
+		
+		winCountLabel = new JLabel("Wins: " + winCount);
+		winCountLabel.setBorder(BorderFactory.createMatteBorder(5,5,5,5,Color.WHITE));
+		winCountLabel.setBackground(Color.WHITE);
+		winCountLabel.setOpaque(true);
 		gbc.weighty = 0.01;
 		gbc.gridx = 2;
 		gbc.gridy = 5;
-		gamePanel2.add(reset, gbc);
-	
+		gamePanel2.add(winCountLabel, gbc);
+		
+		
+		saveButton.setBorder(BorderFactory.createMatteBorder(5,5,5,5,Color.GRAY));
+		saveButton.setBackground(Color.WHITE);
+		saveButton.setOpaque(true);
+		gbc.weighty = 0.01;
+		gbc.gridx = 2;
+		gbc.gridy = 6;
+		gamePanel2.add(saveButton, gbc);
+		
+		
 		attackLog = new JPanel();
 		GridBagConstraints gbc2 = new GridBagConstraints();
 		attackLog.setLayout(new GridBagLayout());
@@ -281,7 +307,7 @@ public class GameView extends JFrame
 		gbc.ipady = 10;
 		gamePanel2.add(attackLog, gbc);
 		
-		j1 = new JLabel("Attack1!");
+		j1 = new JLabel("Attack!");
 		j1.setFont(new Font(Font.MONOSPACED, Font.BOLD | Font.ITALIC, 20));
 		gbc2.ipady = 30;
 		gbc2.gridy = 2;
@@ -292,6 +318,38 @@ public class GameView extends JFrame
 		attackLog.add(j2);
 
 		
+	}
+	
+	public void setWinnerBackground()
+	{
+		gamePanel2.setBackground(Color.green);
+		reset.setVisible(true);
+		
+	}
+	
+	public void updateWinCount()
+	{
+		winCountLabel.setText("Wins: " + winCount);
+	}
+	
+
+	
+	public void resetGame()
+	{
+		gamePanel2.setBackground(Color.black);
+		winCount++;
+		winCountLabel.setText("Wins: " + winCount);
+		reset.setVisible(false);
+		
+	}
+	
+
+	public void gamePanelSetNotVisible()
+	{
+		add(gamePanel2);
+		createPanelTwo();
+		gamePanel.setVisible(false);
+		gamePanel2.setVisible(true);
 	}
 	
 	
@@ -308,29 +366,6 @@ public class GameView extends JFrame
 		j1.setText(text);
 	
 	}
-	
-//	public void addFootSoleImage() 
-//	{
-//				
-//	
-//		try
-//		{
-//			ImageIcon footImage = new ImageIcon("///Users/rodneywiththefatassbutt/git/Project2/src/Images/footSole.png");
-//			Image scaledImage = footImage.getImage().getScaledInstance(500, 500, Image.SCALE_DEFAULT);
-//	
-//			j2.setIcon(footImage);
-//			Thread.sleep(1000);
-//			j2.setVisible(false);
-//		}
-//		catch (InterruptedException e)
-//		{
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-////		j2.setIcon(new JLabel(new ImageIcon(scaledImage));
-//	
-//	}
 	
 
 	public String getName()
@@ -370,6 +405,16 @@ public class GameView extends JFrame
 		
 	}
 	
+	public void addResetGameButton(ActionListener resetButtonListener)
+	{
+		reset.addActionListener(resetButtonListener);
+	}
+	
+	public void addSaveGameButton(ActionListener saveButtonListener)
+	{
+		saveButton.addActionListener(saveButtonListener);
+	}
+	
 	public void errorMessage(String eMessage)
 	{
 		JOptionPane.showMessageDialog(this, eMessage);
@@ -383,6 +428,44 @@ public class GameView extends JFrame
 	public JTextField getWeaponDamageField()
 	{
 		return weaponDamage;
+	}
+	
+
+
+	public void showCharacterHealth(double player1Health, double player2Health)
+	{
+		youLabel.setText("YOU: " + player1Health);
+		oppLabel.setText("OPPONENT: " + player2Health);
+		
+		
+	}
+
+	public void setGamePanel2(Color color)
+	{
+		gamePanel2.setBackground(color);
+	}
+
+	public int getWinCount()
+	{
+		
+		return winCount;
+	}
+
+	public Component getGamePanel2()
+	{
+		// TODO Auto-generated method stub
+		return gamePanel2;
+	}
+
+	public void setWinCount(int num)
+	{
+		winCount = num;
+		
+	}
+	
+	public String getLoadSaveField()
+	{
+		return jText.getText();
 	}
 	
 

@@ -6,7 +6,7 @@ public class Weapon
 	
 	public Weapon()
 	{
-		setNameOfWeapon("Sword");
+		
 		damageOfWeapon = 15.0;
 	}
 	
