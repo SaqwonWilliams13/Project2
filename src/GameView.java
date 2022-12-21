@@ -33,16 +33,19 @@ public class GameView extends JFrame
 	//Character related information
 	private JLabel nameSelect;
 	private JTextField nameTextField;
-	private JLabel playerLabel;
-	private JLabel weaponLabel;
+	private JLabel playerLabel  = new JLabel("");
+	private JLabel weaponLabel = new JLabel();
 	private JLabel youLabel;
 	private JLabel oppLabel;
+	private JLabel oppCharacter;
 	private JButton brawlerButton;
-	private JTextField jText;
+	
+	//File Related
+	private JTextField previousSaveField;
+	private JTextField saveFileTextField;
 	
 	
 	//Weapon related
-
 	private String weaponName;
 	private JLabel weaponInfo;
 	private JTextField weaponDamage;
@@ -69,7 +72,7 @@ public class GameView extends JFrame
 	//File related
 	private int winCount;
 	private JButton saveButton = new JButton("Save");
-	private JButton loadSaveButton = new JButton("Load Save");
+	private JButton loadSaveButton = new JButton("Press To Confirm Previous Save");
 
 
 	public GameView()
@@ -130,6 +133,9 @@ public class GameView extends JFrame
 		gamePanel.add(weaponInfo, c);
 		
 		brawlerButton = new JButton("Brawler");
+		brawlerButton.setBackground(Color.blue);
+		brawlerButton.setOpaque(true);
+		brawlerButton.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.black));
 		brawlerButton.setFont(new Font("Dialog", Font.PLAIN, 20));
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weighty = 0;
@@ -137,22 +143,46 @@ public class GameView extends JFrame
 		c.gridy = 4;
 		gamePanel.add(brawlerButton, c);
 		
+		JLabel saveFile = new JLabel("Enter File to Save Game To");
+		saveFile.setFont(new Font("Dialog", Font.PLAIN, 20));
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0;
+		c.weighty = 0;
+		c.gridx = 2;
+		c.gridy = 6;
+		gamePanel.add(saveFile, c);
+		
+		saveFileTextField = new JTextField("Enter new File here");
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.weightx = 0;
+		c.weighty = 0;
+		c.gridx = 2;
+		c.gridy = 7;
+		gamePanel.add(saveFileTextField, c);
+		
 		JLabel orLabel = new JLabel("Or Enter Previous Save File");
 		orLabel.setFont(new Font("Dialog", Font.PLAIN, 20));
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 0;
 		c.weighty = 0;
 		c.gridx = 2;
-		c.gridy = 6;
+		c.gridy = 8;
 		gamePanel.add(orLabel, c);
 		
-		jText = new JTextField("Enter Your Save File Here");
+		previousSaveField = new JTextField("Enter Your Old Save File Here");
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 0;
 		c.weighty = 0;
 		c.gridx = 2;
-		c.gridy = 7;
-		gamePanel.add(jText, c);
+		c.gridy = 9;
+		gamePanel.add(previousSaveField, c);
+		
+		loadSaveButton.setFont(new Font("Dialog", Font.PLAIN, 20));
+		c.weightx = 0;
+		c.weighty = 0;
+		c.gridx = 2;
+		c.gridy = 10;
+		gamePanel.add(loadSaveButton, c);
 		
 		clickToPlayButtonLabel = new JLabel("Press The Play Button To Continue");
 		clickToPlayButtonLabel.setFont(new Font("Dialog", Font.PLAIN, 20));
@@ -160,22 +190,19 @@ public class GameView extends JFrame
 		c.weightx = 0;
 		c.weighty = 0;
 		c.gridx = 2;
-		c.gridy = 10;
+		c.gridy = 11;
 		gamePanel.add(clickToPlayButtonLabel, c);
 		
-		loadSaveButton.setFont(new Font("Dialog", Font.PLAIN, 20));
-		c.weightx = 0;
-		c.weighty = 0;
-		c.gridx = 2;
-		c.gridy = 9;
-		gamePanel.add(loadSaveButton, c);
-		
+
 		playButton = new JButton("PLAY");
+		playButton.setBackground(Color.orange);
+		playButton.setOpaque(true);
+		playButton.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.black));
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 0;
 		c.weighty = 0;
 		c.gridx = 2;
-		c.gridy = 11;
+		c.gridy = 12;
 		gamePanel.add(playButton, c);
 	}
 	
@@ -207,7 +234,7 @@ public class GameView extends JFrame
 		gbc.gridy = 1;
 		gamePanel2.add(youLabel, gbc);
 		
-		playerLabel = new JLabel(getName());
+		
 		playerLabel.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 15));
 		playerLabel.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 		playerLabel.setForeground(Color.white);
@@ -216,7 +243,7 @@ public class GameView extends JFrame
 		gbc.gridy = 2;
 		gamePanel2.add(playerLabel, gbc);
 		
-		weaponLabel = new JLabel("Weapon: " + weaponName);
+		weaponLabel.setText("Weapon: " + weaponName);
 		weaponLabel.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 15));
 		weaponLabel.setBorder(BorderFactory.createLineBorder(Color.orange));
 		weaponLabel.setForeground(Color.white);
@@ -233,7 +260,7 @@ public class GameView extends JFrame
 		gbc.gridy = 1;
 		gamePanel2.add(oppLabel, gbc);
 		
-		JLabel oppCharacter = new JLabel("Karen");
+		oppCharacter = new JLabel();
 		oppCharacter.setFont(new Font("Dialog", Font.BOLD | Font.ITALIC, 15));
 		oppCharacter.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 		oppCharacter.setForeground(Color.white);
@@ -356,7 +383,7 @@ public class GameView extends JFrame
 	public void setWeaponName(String name)
 	{
 		
-		weaponName = name;
+		weaponLabel.setText(name);
 		
 	}
 	
@@ -367,7 +394,13 @@ public class GameView extends JFrame
 	
 	}
 	
-
+	public void setPlayerLabel(String name)
+	{
+		
+		playerLabel.setText(name);
+		
+	}
+		
 	public String getName()
 	{
 		return nameTextField.getText();
@@ -413,6 +446,11 @@ public class GameView extends JFrame
 	public void addSaveGameButton(ActionListener saveButtonListener)
 	{
 		saveButton.addActionListener(saveButtonListener);
+	}
+	
+	public void addLoadGame(ActionListener loadGameListener)
+	{
+		loadSaveButton.addActionListener(loadGameListener);
 	}
 	
 	public void errorMessage(String eMessage)
@@ -462,12 +500,40 @@ public class GameView extends JFrame
 		winCount = num;
 		
 	}
-	
-	public String getLoadSaveField()
+
+	public String getSaveTextField()
 	{
-		return jText.getText();
+		return saveFileTextField.getText();
 	}
 	
+	public String getPreviousSaveField()
+	{
+		return previousSaveField.getText();
+	}
+
+	public void setATK1ButtonVisible(boolean b)
+	{
+		atk1.setVisible(b);
+		
+	}
+	
+	public void setATK2ButtonVisible(boolean b)
+	{
+		atk2.setVisible(b);
+		
+	}
+
+	public void setOppLabel(String word)
+	{
+		oppCharacter.setText(word);
+		
+	}
+	
+	public void setYouLabel()
+	{
+		
+	}
+
 
 	
 }
